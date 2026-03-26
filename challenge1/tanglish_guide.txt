@@ -1,0 +1,87 @@
+════════════════════════════════════════════════════════════════
+  SHADOWNET :: GHOST SIGNAL V2 — TANGLISH GUIDE FOR ORGANIZERS
+════════════════════════════════════════════════════════════════
+
+Macha, intha CTF purinji nadathurathu romba simple. Intha document
+oru quick guide for you (organizers mattum padikka vendiyathu).
+Ethuku v2 upgrade pannom na, ippo ellam pasanga AI (ChatGPT,
+Claude) vechu source code ah paste panni answer eduthudranga.
+Athai thadukka thaan intha 4 AI-proof modules!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EPDI WORK AAGUTHU & FLAG EPDI EDUKURATHU? (Module-by-Module)
+
+Original Final Flag: CTF{r34l_3y3s_c4n_h34r}
+
+MODULE 01 — RETINAL STROBE (Kanna moodi thirakkanum!)
+Enna nadakkuthu: Oru TV static noise aah irukkum. Athula thideer nu
+oru pink/magenta color box varum, just 1 frame (romba fast ah!).
+Solve panrathu epdi: Antha pink box enga varutho, atha pathu udane
+correct ah 0.5 seconds kulla click pannanum.
+AI yen fail aagum: AI aala kanna vechu paka mudiyathu. Code la antha
+box entha edathula varum nu ezhuthave illa (random position at runtime).
+
+MODULE 02 — TEMPORAL WATERMARK (Browser inspection thiranaai!)
+Enna nadakkuthu: Innoru noise image. Ana athula 4 secret pixels irukku.
+Antha 4 pixels oda color: Green=6, Blue=28 irukkum.
+Solve panrathu epdi: Pasanga console la poi JS code ezhuthi antha
+(G=6, B=28) irukka pixels ah thedi kandupudikkanum. Kandupudicha 4
+digits kedaikum: 7, 3, 5, 1. Input box la "7351" nu enter pannanum.
+AI yen fail aagum: Antha pixels enga irukkum nu formula (sin/cos)
+vechu mathitikitte irukkum (every 250ms). AI aala live ah canvas ah
+scan panna JS ezhuthi run panna kashtam.
+
+MODULE 03 — ACOUSTIC GHOST (Kaadhu kuduthu kelkanum!)
+Enna nadakkuthu: "PLAY SIGNAL" button amukkuna noise sound varum.
+Screen la perusa "SYNC CODE: 3392" nu potrukum - ATHU FAKE!
+Solve panrathu epdi: Antha sound la 1.5s la phone keypad sound mathiri
+tutt-tutt nu kekum (DTMF tones). Atha record panni decode panna
+4-8-1-6 nu varum. Input box la "4816" enter pannanum.
+AI yen fail aagum: Text-padikkira bot ku kaadhu kekkathu. Athu antha
+fake SYNC CODE ah thaan answer nu nenaikum.
+
+MODULE 04 — PRESSURE SIGNATURE (Kaiala draw pannanum!)
+Enna nadakkuthu: Oru empty box irukkum. Athula mouse aalaiyo illa
+touch aalaiyo draw pannanum.
+Solve panrathu epdi: Box oda left side nungu enter aagi, oru 'S' shape
+illa snake mathiri zig-zag ah draw pannitu right side veliya varanum.
+Ore speed la illama konjam human mathiri real ah draw pannanum.
+AI yen fail aagum: Fake clicks/movements ah browser allow thaan pannum,
+ana `isTrusted=false` nu adichu vidum. JavaScript AI bots laam
+script moolama mouse asacha atha isTrusted kandupudichidum.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EVENT EPDI ORGANIZE PANNANUM? (Best Practices)
+
+1. SETUP & HOSTING
+   Intha `index.html` ah Vercel, Netlify illa GitHub Pages la deploy
+   pannidu. Back-end thevai illa. Static rendering pothum.
+
+2. CLUES KUDUKURATHU (Hints strategy)
+   Pasanga stuck aagi ukkanthuttanga na, udane answer sollida koodathu.
+   `organize.txt` file la 3 tiers of hints irukku.
+   - 30 mins aagi progress illana: Tier 1 hint sollu.
+   - 1 hour aagi aabathamana nelamai na: Tier 2 hint sollu.
+   - Tier 3 ah last resort ah vachikko, athu almost answer than!
+
+3. DECOY ALERTS (Important!)
+   Intha challenge la 13 FAKE flags vechurukom (source code,
+   localStorage, css var nu ellathilayum).
+   Pasanga "Macha flag kedaichiduchu!" nu fake flag ah unkitta
+   kondu vanthu kaatuvanga. "Ha ha, try harder" nu cool ah sollanum.
+   Real flag: `CTF{r34l_3y3s_c4n_h34r}` mattum thaan!
+
+4. RULES ANNOUNCEMENT
+   Initial ah CTF start panrappa intha hints sethu sollu:
+   "Guys, F12 (DevTools) is your best friend. But AI will fail you.
+   Don't trust everything you read in the source code."
+
+5. TROUBLESHOOTING
+   Oru vela Module 01 (Retinal Strobe) click aagala nu evanavathu
+   sonna, avana innum fast ah antha color mela click panna sollu.
+   Module 04 (Pressure) work aagala na, laptop trackpad pathila,
+   phone la open panni touch la draw panna sollu (athu pressure
+   romba accurate ah detect pannum).
+
+Mass panniduvom macha! All the best for the event! 🚀
+════════════════════════════════════════════════════════════════
