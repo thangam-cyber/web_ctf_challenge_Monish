@@ -1,0 +1,131 @@
+════════════════════════════════════════════════════════════════
+  SHADOWNET :: GHOST SIGNAL R2 — ORGANIZED INDIRECT HINTS
+  Release these one at a time if participants are stuck.
+  Hints are deliberately vague — no direct answers given.
+════════════════════════════════════════════════════════════════
+
+HOW TO USE THIS FILE:
+  • Release Hint Tier 1 first — after ~30 mins of no progress
+  • Release Hint Tier 2 — if still stuck after another 30 mins
+  • Never release Tier 3 (that is essentially the answer)
+  • Keep at least one module hint-free for the final 20% effort
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MODULE 01 — RETINAL STROBE
+
+  [Tier 1 — Observation]
+    "The canvas is noisy, but not everything is noise.
+     Something flashes briefly — blink and you'll miss it."
+
+  [Tier 2 — Direction]
+    "A cluster of colored pixels appears for one frame.
+     It's a specific color — pink/magenta — against dark noise.
+     Click where you see it. You have about half a second."
+
+  [Tier 3 — Near answer, use only as last resort]
+    "Watch the canvas closely. A bright pink/magenta flash (R=211,
+     G=47, B=141) appears at a random position for one frame.
+     Click on it within ~500ms of seeing it."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MODULE 02 — TEMPORAL WATERMARK
+
+  [Tier 1 — Observation]
+    "The noise canvas you see isn't entirely random.
+     Some pixels carry a signal — but they don't stay still."
+
+  [Tier 2 — Direction]
+    "Open your browser's DevTools Console. You'll need to write
+     a script to scan the canvas for pixels that look different
+     from the surrounding noise. The signal pixels have a unique
+     color signature — low green channel, specific blue channel."
+
+  [Tier 3 — Near answer, use only as last resort]
+    "Signal pixels have G=6, B=28. Scan the entire canvas in a
+     tight loop for pixels matching that signature. The R channel
+     of each signal pixel encodes a digit: floor(R / 25).
+     There are 4 signal pixels. The digits form a 4-char code."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MODULE 03 — ACOUSTIC GHOST
+
+  [Tier 1 — Observation]
+    "Not all signals are visual. This module has a play button.
+     What happens when you press it? Listen carefully."
+
+  [Tier 2 — Direction]
+    "An audio signal plays when you click the button. Buried
+     in the noise at around 1.5 seconds, there are tones.
+     These are telephone tones — a specific encoding standard.
+     The SYNC CODE on screen is a decoy. Ignore it."
+
+  [Tier 3 — Near answer, use only as last resort]
+    "The tones are DTMF (Dual-Tone Multi-Frequency) — the same
+     tones your phone makes when dialing. Record the audio and
+     use a DTMF decoder, or identify the tones by ear/spectrogram.
+     They encode a 4-digit number. That is your answer."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MODULE 04 — PRESSURE SIGNATURE
+
+  [Tier 1 — Observation]
+    "The system asks for your 'signature.' Signatures aren't
+     straight lines. What shape does a human hand naturally make?"
+
+  [Tier 2 — Direction]
+    "Move your mouse (or finger on touchscreen) through the zone.
+     Your movement must be natural — not a straight line.
+     The system measures your speed variation, direction changes,
+     and whether your input comes from real hardware."
+
+  [Tier 3 — Near answer, use only as last resort]
+    "Enter from the left side. Draw an S-shape or zigzag with at
+     least 3 direction changes on the Y axis. Move at varying
+     speeds (not constant). Exit from the right side. Do it
+     within 4 seconds. The path must be > 200px long."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+GENERAL HINTS (release to all if overall direction is lost):
+
+  "Not everything on this page is meant to be read at face value.
+   What you see is the surface. What matters is beneath it."
+
+  "This challenge was designed to defeat machines.
+   Use the skills machines lack: observation, deduction, intuition."
+
+  "Four fragments, four mechanisms, one signal.
+   You don't need all four simultaneously — each unlocks independently."
+
+  "The flag was assembled from pieces. The pieces appear only
+   after each gate opens. No piece is visible before its gate is passed."
+
+  "Decoys have been placed in obvious locations — source code,
+   cookies, localStorage, console output, CSS variables, meta tags.
+   If something feels too easy, it is probably wrong."
+
+  "One module requires your eyes. One requires your code.
+   One requires your ears. One requires your hands."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMMON MISTAKES PARTICIPANTS MAKE:
+
+  ✗ Trusting the SYNC CODE displayed on screen — it is always wrong
+  ✗ Checking HTML source for the flag — only 12+ decoys are there
+  ✗ Looking at network requests — no backend, nothing to intercept
+  ✗ Trying cookie / localStorage manipulation — decoy flags stored there
+  ✗ Reading CSS variables — decoy flag in --secret
+  ✗ Checking console output — decoy flag logged after 3 seconds
+  ✗ Reading JavaScript for the flag — it is XOR-encoded, not plaintext
+  ✗ Trying to dispatch synthetic click events — isTrusted guard blocks them
+  ✗ Using Playwright/Puppeteer to automate — pressure + isTrusted defeats it
+  ✗ Clicking the strobe canvas randomly — must see and click the actual flash
+  ✗ Submitting partial flags — all 4 modules must be solved first
+  ✗ Using AI assistants to analyze source — they find only decoys
+
+════════════════════════════════════════════════════════════════

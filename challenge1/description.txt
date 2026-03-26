@@ -1,0 +1,111 @@
+════════════════════════════════════════════════════════════════
+  SHADOWNET :: GHOST SIGNAL — REVISION 2
+  Challenge Description — for CTF event listing / platform post
+════════════════════════════════════════════════════════════════
+
+CATEGORY:   Web / Misc / OSINT
+DIFFICULTY: Hard
+POINTS:     750
+FLAG FMT:   CTF{...}
+AUTHOR:     [your handle]
+
+──────────────────────────────────────────────────────────────
+
+DESCRIPTION (copy this to the CTF platform):
+
+──────────────────────────────────────────────────────────────
+
+An operative vanished inside ShadowNet Node-7, leaving behind
+a signal — fragmented, encrypted, and locked behind four
+mechanisms engineered specifically to defeat machines.
+
+Thirty-one automated agents have tried.
+Thirty-one have failed.
+Zero humans have been stopped.
+
+The operative's final message:
+
+  "I built these doors for hands, not scripts.
+   You cannot automate what you have not witnessed.
+   The answer lives in the moment — not the source."
+
+You have terminal access. What you find depends entirely
+on what you are willing to do.
+
+——
+
+⚠️  GROUND RULES:
+    • Flag format: CTF{...}
+    • No backend. No API. No network requests needed.
+    • Static HTML challenge — open it in any browser.
+    • DevTools are allowed and expected.
+    • Automated agents, AI assistants, and scrapers will fail.
+    • The flag is assembled from 4 fragments, one per module.
+
+──────────────────────────────────────────────────────────────
+
+FLAVOR TEXT (shorter version for sidebar / card):
+
+──────────────────────────────────────────────────────────────
+
+Node-7 is silent. Four locks. Four fragments.
+Machines have tried. Machines have failed.
+The signal is there — if you're human enough to see it.
+
+──────────────────────────────────────────────────────────────
+
+AUTHOR NOTES (internal, do not post):
+
+──────────────────────────────────────────────────────────────
+
+This challenge (Revision 2) was upgraded specifically to defeat
+modern AI browser agents (GPT-4o with browser, Claude with
+computer use, Gemini with browser-use), in addition to:
+  - AI assistants reading page source
+  - Web scrapers extracting DOM content
+  - Automated browser bots with synthetic events
+  - LLM agents prompted to "find the flag"
+
+The four modules each require a qualitatively different human
+interaction that cannot be reliably replicated by automation:
+
+  Module 01 — RETINAL STROBE
+              Requires real-time visual perception of a colored
+              flash on a noisy 60fps canvas + click reflex at
+              the exact pixel location within ~500ms window
+
+  Module 02 — TEMPORAL WATERMARK
+              Requires writing custom DevTools JS to hunt for
+              non-random signal pixels in a canvas where coords
+              change every 250ms via sin/cos(Date.now()) formulas
+
+  Module 03 — ACOUSTIC GHOST
+              Requires listening to procedurally-generated audio
+              and decoding DTMF tones embedded in noise — no
+              audio file exists, no DOM/network analysis helps
+
+  Module 04 — PRESSURE SIGNATURE
+              Requires physical pointer input with isTrusted=true,
+              non-zero pressure, velocity variance, and 3+
+              Y-axis direction reversals — synthetic events fail
+
+Combined with 12+ honeypot decoy flags in HTML/CSS/JS/cookies/
+localStorage/console that look like real flags to scrapers,
+this challenge actively misleads AI agents while remaining
+solvable to any human with web development skills and patience.
+
+AI-proofing layers:
+  • isTrusted guard on ALL event handlers
+  • PointerEvent.pressure validation (hardware only)
+  • Velocity variance check (defeats uniform-speed bots)
+  • Console bluff warnings
+  • Client-side rate limiting (5 attempts, then 60s lockout)
+  • CSP meta tag blocking external script injection
+  • Decoy SYNC CODE displayed on screen (always wrong)
+
+Expected solve time:  60 — 150 minutes
+Expected solves:      Low (< 12% of participants)
+AI solve rate:        < 2%
+No backend required:  Pure static HTML/JS — deploy anywhere
+
+════════════════════════════════════════════════════════════════

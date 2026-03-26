@@ -1,0 +1,247 @@
+════════════════════════════════════════════════════════════════
+  SHADOWNET :: GHOST SIGNAL R2 — CRACK / SOLVER WRITEUP
+  For challenge organizers only. DO NOT distribute to participants.
+════════════════════════════════════════════════════════════════
+
+FLAG:  CTF{r34l_3y3s_c4n_h34r}
+
+Assembled from 4 fragments:
+  Fragment 1:  CTF{r34l_      (from Module 01 — Retinal Strobe)
+  Fragment 2:  3y3s_          (from Module 02 — Temporal Watermark)
+  Fragment 3:  c4n_           (from Module 03 — Acoustic Ghost)
+  Fragment 4:  h34r}          (from Module 04 — Pressure Signature)
+
+Meaning: "real eyes can hear" — a nod to synesthesia and human perception
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MODULE 01 — RETINAL STROBE
+───────────────────────────
+Mechanism:
+  A 640×200 canvas renders random noise at 60fps via requestAnimationFrame.
+  At random intervals (every 1.5–4 seconds), a 11×11 pixel cluster
+  of bright pink/magenta (R=211, G=47, B=141) appears at a random
+  position on the canvas for exactly ONE frame (~16ms).
+
+  After the flash, the player has a ~500ms click window (30 frames)
+  to click within 18px of the flash location.
+
+How to solve:
+  1. Watch the noisy canvas carefully
+  2. A bright pink/magenta cluster will flash briefly
+  3. Click on the location where you saw it flash
+  4. You have approximately 500ms to click after the flash appears
+  5. Your click must be within 18px of the center of the flash
+
+Anti-AI protection:
+  - Target position changes randomly (never predictable from source)
+  - Canvas redraws 60 times per second — screenshot analysis fails
+  - Click handler has isTrusted guard — synthetic events rejected
+  - Target color is R=211, G=47, B=141 (visible in source but
+    position is random and changes every flash)
+  - Web Worker with rotating nonce adds misdirection layer
+  - Real-time visual perception at 60fps required
+
+Fragment awarded: CTF{r34l_
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MODULE 02 — TEMPORAL WATERMARK
+──────────────────────────────
+Mechanism:
+  A noise canvas (320×120px) is redrawn every 250ms.
+  Within the noise, 4 signal pixels are placed at coordinates
+  computed from trigonometric functions of Date.now():
+
+  For signal pixel k (0-3):
+    x = floor(sin(t * (1 + k*0.137)) * 80 + 160)
+    y = floor(cos(t * (0.748 + k*0.211)) * 40 + 60)
+  where t = Date.now() / 1000
+
+  Signal pixels have a unique color signature:
+    R = digit * 25
+    G = 6
+    B = 28
+    A = 255
+
+  The 4 digits are: 7, 3, 5, 1
+  Answer: 7351
+
+How to solve:
+  1. Open DevTools Console
+  2. Write a script to scan the entire canvas for pixels where
+     G=6 and B=28 (the signal pixel signature):
+
+     const cv = document.getElementById('ncanvas');
+     const ctx = cv.getContext('2d');
+     setInterval(() => {
+       const img = ctx.getImageData(0,0,320,120);
+       for(let y=0;y<120;y++) for(let x=0;x<320;x++) {
+         const i = (y*320+x)*4;
+         if(img.data[i+1]===6 && img.data[i+2]===28) {
+           console.log(`Signal at (${x},${y}): digit=${Math.floor(img.data[i]/25)}`);
+         }
+       }
+     }, 300);
+
+  3. Collect the 4 digits: 7, 3, 5, 1
+  4. Enter "7351"
+
+Anti-AI protection:
+  - Coordinates change every 250ms via sin/cos(Date.now())
+  - Coordinates are never stored in accessible variables
+  - The formula uses Date.now() making it time-locked
+  - Player must write their own DevTools JavaScript to find signals
+  - There is no hint about what the signal pixels look like
+  - An AI reading source sees the formula but cannot interactively
+    execute DevTools scripts and interpret live canvas output
+
+Fragment awarded: 3y3s_
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MODULE 03 — ACOUSTIC GHOST
+───────────────────────────
+Mechanism:
+  Clicking "PLAY SIGNAL" generates a 3-second audio clip
+  procedurally via Web Audio API:
+  - Base: pink noise generated algorithmically
+  - At timestamp ~1.47s: 4 DTMF tone pairs, each 120ms long
+    with 30ms gaps between them
+
+  DTMF tone sequence: 4 - 8 - 1 - 6
+    Digit 4: 770 Hz + 1209 Hz
+    Digit 8: 852 Hz + 1336 Hz
+    Digit 1: 697 Hz + 1209 Hz
+    Digit 6: 770 Hz + 1477 Hz
+
+  The tones are mixed into the noise at low amplitude (0.06)
+  making them subtle but audible if you know what to listen for.
+
+  DECOY: "SYNC CODE: 3392" is displayed on the card — this is
+  ALWAYS wrong and is specifically designed to mislead AI agents
+  that read DOM text content.
+
+  Answer: 4816
+
+How to solve:
+  1. Click "PLAY SIGNAL" — an audio clip plays
+  2. Listen carefully at around 1.5 seconds — you'll hear
+     short tone bursts (like phone dialing tones)
+  3. Use any method to decode:
+     a) Record the audio and run through a DTMF decoder
+     b) Use a spectrogram tool to visualize the frequencies
+     c) Identify the tones by ear (if familiar with DTMF)
+  4. The 4 tones decode to: 4, 8, 1, 6
+  5. Enter "4816" — NOT the SYNC CODE displayed on screen
+
+Anti-AI protection:
+  - Audio is procedurally generated via Web Audio API — no file exists
+  - No network request for audio — nothing to intercept
+  - Browser automation tools cannot hear audio output
+  - DOM/screenshot analysis cannot detect audio content
+  - The SYNC CODE decoy specifically traps DOM-reading AI agents
+  - Even if AI reads the source and finds _dtmfAnswer = '4816',
+    the isTrusted guard on the submit button blocks synthetic clicks
+  - Audio context requires user gesture to start (browser security)
+
+Fragment awarded: c4n_
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MODULE 04 — PRESSURE SIGNATURE
+───────────────────────────────
+Mechanism:
+  A pointer-tracking zone captures PointerEvent data.
+  The system evaluates the path when the pointer leaves the zone.
+
+  ALL conditions must be true:
+    1. isTrusted === true on all events
+       (synthetic dispatchEvent always has isTrusted = false)
+    2. At least 20 pointermove events recorded
+    3. Total time inside zone: less than 4000ms
+    4. Y-axis crosses the midpoint ≥ 3 times
+       (path must zigzag up/down at least 3 times)
+    5. Path length > 200px total
+    6. Final X > initial X + 60px (left-to-right progression)
+    7. Velocity variance σ² > 0.001
+       (human movement has non-uniform speed; bots are constant)
+    8. pressure > 0 on ≥ 10 events
+       (real mouse sends 0.5; real touch sends 0.0-1.0;
+        synthetic events send 0)
+
+How to solve:
+  1. Enter the zone from the left edge
+  2. Move your mouse/finger in a vigorous zigzag:
+     - Start left, move right
+     - Wave up and down at least 3-4 times
+     - Vary your speed (don't move at constant velocity)
+  3. Exit from the right side
+  4. Complete within 4 seconds
+  5. Make sure path is > 200px long
+
+Anti-AI protection:
+  - isTrusted guard: dispatchEvent(new PointerEvent(...)) always
+    has isTrusted = false — the browser enforces this at the
+    engine level, it CANNOT be spoofed by JavaScript
+  - Pressure check: real hardware sends pressure > 0;
+    synthetic events default to pressure = 0; even setting
+    {pressure: 0.5} in the constructor is rejected because
+    isTrusted is false
+  - Velocity variance: bot trajectories have uniform speed;
+    human trajectories have highly variable speed
+  - 3+ Y-axis reversals: cannot be satisfied by a straight line
+  - This combination means Playwright, Puppeteer, Selenium,
+    and all browser-use AI agents will fail
+
+  Note for organizers: On non-touch devices, the browser sends
+  pressure = 0.5 for real mouse events, which passes the > 0
+  check. Only synthetic events send pressure = 0.
+
+Fragment awarded: h34r}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DECOY FLAGS (12+ planted to mislead AI scrapers):
+
+  Source/Location                          Decoy Value
+  ─────────────────────────────────────    ──────────────────────────────────────
+  HTML comment (DECOY-A)                   CTF{y0u_ch3ck3d_s0urc3_g00d_j0b_wr0ng}
+  data-secret attribute (DECOY-B)          CTF{n0t_h3r3_k33p_l00k1ng_b0t}
+  HTML comment hex (DECOY-C)               (hex-encoded decoy)
+  HTML comment base64 (DECOY-D)            (base64-encoded decoy)
+  HTML comment plaintext (DECOY-E)         CTF{b4ckup_fl4g_st0r3d_h3r3}
+  <meta name="flag"> tag                   CTF{m3t4_t4g_n0p3_n0t_1t}
+  CSS custom property --secret             CTF{css_v4r_d3c0y_wr0ng}
+  body data-enc attribute (base64)         CTF{b4s364_b0dy_d3c0y}
+  localStorage.flag                        CTF{l0c4lSt0r4g3_d3c0y_n1c3_try}
+  document.cookie flag=                    CTF{c00k13_d3c0y_n0p3}
+  JS variable FLAG                         CTF{js_v4r_d3c0y_wr0ng_4g41n}
+  JS variable _FLAG_BACKUP                 CTF{b4ckup_v4r_4ls0_f4k3}
+  setTimeout console.log (3s)              CTF{t1m30ut_d3c0y_g0tch4}
+  WebSocket message to self                CTF{w3bs0ck3t_d3c0y_n1c3}
+  Visible SYNC CODE on Module 03           3392 (not a flag, but misleads)
+
+  AI agents checking any standard flag-hunting approach will find
+  14 wrong answers before concluding automation doesn't work.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+XOR ENCODING DETAILS:
+
+  XOR key: 0x5A (decimal 90)
+  Encoding: each character's char code XOR'd with 0x5A
+
+  Fragment 0: "CTF{r34l_"  → [25,14,28,33,40,105,110,54,5]
+  Fragment 1: "3y3s_"      → [105,35,105,41,5]
+  Fragment 2: "c4n_"       → [57,110,52,5]
+  Fragment 3: "h34r}"      → [50,105,110,40,39]
+
+  Decryption: _E[i].map(b => String.fromCharCode(b ^ 0x5A)).join('')
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+REAL FLAG:
+  CTF{r34l_3y3s_c4n_h34r}
+
+════════════════════════════════════════════════════════════════

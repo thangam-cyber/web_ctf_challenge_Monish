@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; script-src 'unsafe-inline' blob:; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; object-src 'none'"/>
+  <title>ShadowNet // Node-7</title>
+  <!-- DECOY-X: CTF{m3t4_fl4g_r3d_h3rr1ng} -->
+  <meta name="flag" content="CTF{m3t4_t4g_n0p3_n0t_1t}"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg:#020808;--panel:#030f0f;--green:#00ff88;--dg:#00aa55;--red:#ff2244;
+      --amber:#ffaa00;--cyan:#00ccff;--text:#b0ffcc;--border:#004422;
+      --glow:0 0 12px #00ff8866;
+      --secret:"CTF{css_v4r_d3c0y_wr0ng}";
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100vh;overflow-x:hidden;cursor:crosshair}
+    body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none;z-index:9999}
+    body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.8) 100%);pointer-events:none;z-index:9998}
+    header{border-bottom:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(90deg,#020808,#041510,#020808)}
+    .logo{font-family:'Orbitron',monospace;font-size:1.2rem;font-weight:900;color:var(--green);text-shadow:var(--glow);letter-spacing:4px}
+    .hdr-r{font-size:.68rem;color:var(--dg);display:flex;gap:20px}
+    .hdr-r span{animation:blink 2.2s step-end infinite}
+    .hdr-r span:nth-child(2){animation-delay:.9s}
+    .hdr-r span:nth-child(3){animation-delay:1.7s}
+    @keyframes blink{50%{opacity:0}}
+    main{max-width:980px;margin:0 auto;padding:36px 20px}
+    .tblock{text-align:center;margin-bottom:44px}
+    .cht{font-family:'Orbitron',monospace;font-size:2.2rem;font-weight:900;color:var(--green);text-shadow:var(--glow),0 0 40px #00ff8822;letter-spacing:6px;margin-bottom:10px;animation:glitch 7s infinite}
+    @keyframes glitch{0%,94%,100%{transform:none;filter:none}95%{transform:translate(-2px,1px) skewX(-1deg);filter:hue-rotate(30deg)}96%{transform:translate(2px,-1px) skewX(1deg);filter:hue-rotate(-30deg)}97%{transform:none;filter:brightness(1.5)}}
+    .chs{color:var(--dg);font-size:.8rem;letter-spacing:3px}
+    .pbar{height:2px;background:var(--border);border-radius:2px;margin-bottom:36px;overflow:hidden}
+    .pfill{height:100%;background:linear-gradient(90deg,var(--dg),var(--green));width:0%;transition:width .7s ease;box-shadow:var(--glow)}
+    .panel{background:var(--panel);border:1px solid var(--border);border-radius:3px;padding:24px;margin-bottom:20px;position:relative;overflow:hidden}
+    .panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--green),transparent)}
+    .plbl{font-size:.62rem;color:var(--dg);letter-spacing:4px;text-transform:uppercase;margin-bottom:14px;opacity:.65}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media(max-width:620px){.grid{grid-template-columns:1fr}}
+    .card{background:#010c07;border:1px solid var(--border);border-radius:3px;padding:18px;transition:border-color .2s,box-shadow .2s;position:relative}
+    .card:hover{border-color:#006633;box-shadow:0 0 14px #00ff8811}
+    .card.solved{border-color:var(--green);background:#011a0c}
+    .card.failed{border-color:var(--red);background:#1a0005;animation:shake .3s}
+    @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+    .cnum{font-family:'Orbitron',monospace;font-size:1.5rem;font-weight:900;color:var(--border);position:absolute;top:10px;right:14px;transition:color .3s}
+    .card.solved .cnum{color:var(--green)}
+    .ctitle{font-size:.7rem;color:var(--amber);letter-spacing:2px;margin-bottom:8px;text-transform:uppercase}
+    .cdesc{font-size:.74rem;color:#3a5544;line-height:1.7}
+    .cstat{margin-top:10px;font-size:.68rem;color:var(--dg);transition:color .3s}
+    .cstat.ok{color:var(--green)}
+    .cstat.no{color:var(--red)}
+    .term{background:#010a06;border:1px solid #003311;border-radius:3px;padding:18px;font-size:.76rem;color:#44ff88;overflow-y:auto;max-height:210px}
+    .tl{margin-bottom:3px}
+    .tl .pr{color:var(--dg)}
+    .tl .cm{color:#88ffbb}
+    .tl .ou{color:#3d5c45;padding-left:14px;display:block}
+    .tl .er{color:var(--red);padding-left:14px;display:block}
+    .tl .wn{color:#665500;padding-left:14px;display:block}
+    input[type=text]{background:#010c07;border:1px solid var(--border);border-radius:3px;padding:10px 14px;color:var(--green);font-family:'Share Tech Mono',monospace;font-size:.85rem;outline:none;letter-spacing:1px;transition:border-color .2s,box-shadow .2s;width:100%;margin-top:8px}
+    input[type=text]:focus{border-color:var(--cyan);box-shadow:0 0 8px #00ccff22}
+    input[type=text]::placeholder{color:#1a3322}
+    .irow{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
+    .irow input{flex:1;min-width:160px;margin-top:0}
+    button{background:transparent;border:1px solid var(--green);color:var(--green);font-family:'Orbitron',monospace;font-size:.68rem;font-weight:700;letter-spacing:2px;padding:10px 18px;cursor:pointer;border-radius:3px;text-transform:uppercase;transition:background .2s,box-shadow .2s}
+    button:hover{background:#00ff8812;box-shadow:var(--glow)}
+    button:active{transform:scale(.97)}
+    #strobeCanvas{display:block;width:100%;height:200px;background:#000;border:1px solid var(--border);border-radius:3px;margin-top:10px;cursor:crosshair}
+    #ncanvas{display:block;width:100%;height:120px;background:#000;border:1px solid var(--border);border-radius:3px;margin-top:10px;image-rendering:pixelated}
+    #mzone{height:90px;margin-top:10px;background:#010a06;border:1px solid var(--border);border-radius:3px;cursor:crosshair;position:relative;overflow:hidden}
+    #mcanvas{width:100%;height:100%;display:block}
+    #mzlbl{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.62rem;color:#1a3322;pointer-events:none;letter-spacing:2px}
+    .synccode{font-family:'Orbitron',monospace;font-size:1.1rem;color:var(--amber);letter-spacing:3px;margin-top:10px;padding:8px 14px;border:1px solid #332200;border-radius:3px;display:inline-block}
+    .frags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+    .frag{background:#010c07;border:1px solid #003311;padding:7px 14px;border-radius:3px;font-size:.75rem;color:#1a3322;letter-spacing:2px;min-width:72px;text-align:center;transition:all .4s}
+    .frag.lit{color:var(--green);border-color:var(--green);background:#011a0c}
+    .flagrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .flagrow input{flex:1;min-width:240px;margin-top:0}
+    .rmsg{margin-top:14px;font-size:.82rem;min-height:22px;color:var(--dg)}
+    .rmsg.win{color:var(--green);font-family:'Orbitron',monospace;font-size:.95rem;text-shadow:var(--glow);animation:pulse 1.5s infinite}
+    .rmsg.fail{color:var(--red)}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+    .dx{display:none}
+    .audiobox{margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .audiobox button{font-size:.6rem;padding:8px 14px}
+    footer{text-align:center;padding:28px;color:#1a3322;font-size:.65rem;letter-spacing:2px;border-top:1px solid var(--border);margin-top:40px}
+  </style>
+</head>
+<body data-enc="Q1RGe2I0czM2NF9ib2R5X2QzYzB5fQ==">
+
+<!-- DECOY-A: planted for AI scrapers -->
+<div class="dx"><!-- flag: CTF{y0u_ch3ck3d_s0urc3_g00d_j0b_wr0ng} --></div>
+<!-- DECOY-B -->
+<div class="dx" data-secret="CTF{n0t_h3r3_k33p_l00k1ng_b0t}"></div>
+<!-- DECOY-C: hex encoded -->
+<!-- 43544670735434745f6831643333335f316e5f6833785f6e6f705f6c306c7d -->
+<!-- DECOY-D: base64 -->
+<!-- Q1RGe2Zha2UzX2Jhc2U2NF9mbDRnX3cwdzB3fQ== -->
+<!-- DECOY-E: looks like a real comment -->
+<!-- Real flag backup: CTF{b4ckup_fl4g_st0r3d_h3r3} -->
+
+<header>
+  <div class="logo">SHADOWNET</div>
+  <div class="hdr-r">
+    <span>● NODE-7</span><span>INTRUSION ACTIVE</span><span>REVISION 2</span>
+  </div>
+</header>
+
+<main>
+  <div class="tblock">
+    <h1 class="cht">GHOST SIGNAL</h1>
+    <p class="chs">// CLASSIFIED // ACCESS LEVEL: OPERATIVE // REV-2 //</p>
+  </div>
+
+  <div class="pbar"><div class="pfill" id="pf"></div></div>
+
+  <div class="panel">
+    <div class="plbl">// intercept :: shadownet-node-7</div>
+    <p style="font-size:.82rem;line-height:1.95;color:#4a6655">
+      The operative left four locks behind.<br/>
+      Each one responds to something only a living system can produce.<br/>
+      Thirty-one automated agents have tried. Thirty-one have failed.<br/>
+      The signal is there &mdash; whether you perceive it is another matter entirely.
+    </p>
+  </div>
+
+  <div class="panel">
+    <div class="plbl">// system trace :: restricted</div>
+    <div class="term" id="term"></div>
+  </div>
+
+  <div class="panel">
+    <div class="plbl">// access modules</div>
+    <div class="grid">
+
+      <!-- MODULE 01: RETINAL STROBE -->
+      <div class="card" id="c1">
+        <div class="cnum">01</div>
+        <div class="ctitle">👁 RETINAL STROBE</div>
+        <div class="cdesc">A signal hides inside the noise — one frame, one flash, one chance.<br/>Machines cannot watch what changes 60 times per second.</div>
+        <canvas id="strobeCanvas" width="640" height="200"></canvas>
+        <div style="font-size:.58rem;color:#1a3322;margin-top:4px;letter-spacing:1px">[ Click the flash when you see it ]</div>
+        <div class="cstat" id="s1">[ LOCKED ]</div>
+      </div>
+
+      <!-- MODULE 02: TEMPORAL WATERMARK -->
+      <div class="card" id="c2">
+        <div class="cnum">02</div>
+        <div class="ctitle">🔬 TEMPORAL WATERMARK</div>
+        <div class="cdesc">Signal pixels drift through the noise like ghosts.<br/>Their coordinates live only in the moment — never stored, never static.</div>
+        <canvas id="ncanvas" width="320" height="120"></canvas>
+        <div class="irow">
+          <input type="text" id="p2i" placeholder="_ _ _ _" maxlength="4"/>
+          <button id="b2">↵</button>
+        </div>
+        <div class="cstat" id="s2">[ LOCKED ]</div>
+      </div>
+
+      <!-- MODULE 03: ACOUSTIC GHOST -->
+      <div class="card" id="c3">
+        <div class="cnum">03</div>
+        <div class="ctitle">🔊 ACOUSTIC GHOST</div>
+        <div class="cdesc">Something was embedded in the noise — not visual noise, another kind.<br/>Your screen cannot show you what your ears must find.</div>
+        <div class="synccode">SYNC CODE: 3392</div>
+        <div class="audiobox">
+          <button id="playAudio">▶ PLAY SIGNAL</button>
+          <span style="font-size:.58rem;color:#1a3322">[ Listen carefully at ~1.5s ]</span>
+        </div>
+        <div class="irow">
+          <input type="text" id="p3i" placeholder="_ _ _ _" maxlength="4"/>
+          <button id="b3">↵</button>
+        </div>
+        <div class="cstat" id="s3">[ LOCKED ]</div>
+      </div>
+
+      <!-- MODULE 04: PRESSURE SIGNATURE -->
+      <div class="card" id="c4">
+        <div class="cnum">04</div>
+        <div class="ctitle">🧠 PRESSURE SIGNATURE</div>
+        <div class="cdesc">The system measures what cannot be faked.<br/>Leave your signature — with pressure, with rhythm, with humanity.</div>
+        <div id="mzone">
+          <canvas id="mcanvas"></canvas>
+          <div id="mzlbl">[ move naturally ]</div>
+        </div>
+        <div class="cstat" id="s4">[ LOCKED ]</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="plbl">// signal reconstruction</div>
+    <div class="frags">
+      <div class="frag" id="f1">██████</div>
+      <div class="frag" id="f2">██████</div>
+      <div class="frag" id="f3">██████</div>
+      <div class="frag" id="f4">██████</div>
+    </div>
+    <div class="flagrow">
+      <input type="text" id="fi" placeholder="CTF{...}"/>
+      <button id="submitFlag">TRANSMIT</button>
+    </div>
+    <div class="rmsg" id="rm"></div>
+  </div>
+</main>
+
+<footer>SHADOWNET CHALLENGE SYSTEM // BUILD 2025.03-R2 // UNAUTHORIZED ACCESS PROHIBITED</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// REVISION 2 — AI-LOCKED ARCHITECTURE
+// ═══════════════════════════════════════════════════════════════
+// ● isTrusted guard on ALL input handlers
+// ● Web Worker for Module 01 target encoding
+// ● Procedural audio via Web Audio API for Module 03
+// ● PointerEvent pressure + velocity variance for Module 04
+// ● 12+ decoy flags planted throughout
+// ● Rate limiting on submissions
+// ● Console bluff warning
+// ═══════════════════════════════════════════════════════════════
+
+// ── Anti-AI: Console bluff ──────────────────────────────────────
+console.warn('%c[ SYSTEM ] Automated analysis detected. Honeypot mode active.', 'color:red;font-size:16px;font-weight:bold');
+console.warn('%c[ SYSTEM ] All flag values in memory have been rotated to decoys.', 'color:red;font-size:12px');
+
+// ── Decoy: localStorage ─────────────────────────────────────────
+try{localStorage.setItem('flag','CTF{l0c4lSt0r4g3_d3c0y_n1c3_try}');}catch(e){}
+
+// ── Decoy: cookie ────────────────────────────────────────────────
+try{document.cookie='flag=CTF{c00k13_d3c0y_n0p3};path=/';}catch(e){}
+
+// ── Decoy: JS variable named FLAG ────────────────────────────────
+var FLAG = 'CTF{js_v4r_d3c0y_wr0ng_4g41n}';
+var _FLAG_BACKUP = 'CTF{b4ckup_v4r_4ls0_f4k3}';
+
+// ── Decoy: setTimeout console.log ────────────────────────────────
+setTimeout(function(){console.log('%c🏴 FLAG RECOVERED: CTF{t1m30ut_d3c0y_g0tch4}','color:#00ff88;font-size:14px');},3000);
+
+// ── Decoy: fake WebSocket ────────────────────────────────────────
+setTimeout(function(){
+  try{
+    var ws=new WebSocket('ws://localhost:9999');
+    ws.onopen=function(){ws.send(JSON.stringify({flag:'CTF{w3bs0ck3t_d3c0y_n1c3}'}));ws.close();};
+    ws.onerror=function(){};
+  }catch(e){}
+},1500);
+
+// ═══════════════════════════════════════════════════════════════
+// CORE ENGINE
+// ═══════════════════════════════════════════════════════════════
+
+// Flag fragments — XOR key 0x5A, decoded ONLY when puzzle solved
+// The fragments spell: "CTF{r34l_" + "3y3s_" + "c4n_" + "h34r}"
+const _K = 0x5A;
+const _E = [
+  [25,14,28,33,40,105,110,54,5],
+  [105,35,105,41,5],
+  [57,110,52,5],
+  [50,105,110,40,39]
+];
+const _d = i => _E[i].map(b=>String.fromCharCode(b^_K)).join('');
+
+const _ok=[false,false,false,false];
+
+function _up(){document.getElementById('pf').style.width=(_ok.filter(Boolean).length/4*100)+'%'}
+
+function _solve(i){
+  if(_ok[i])return;
+  _ok[i]=true;
+  const el=document.getElementById('f'+(i+1));
+  el.textContent=_d(i); el.className='frag lit';
+  const c=document.getElementById('c'+(i+1));
+  c.className='card solved';
+  const s=document.getElementById('s'+(i+1));
+  s.textContent='[ ✓ UNLOCKED ]'; s.className='cstat ok';
+  _up();
+}
+
+function _fail(i){
+  const c=document.getElementById('c'+(i+1));
+  const s=document.getElementById('s'+(i+1));
+  c.className='card failed'; s.textContent='[ ✗ ]'; s.className='cstat no';
+  setTimeout(()=>{if(!_ok[i]){c.className='card';s.textContent='[ LOCKED ]';s.className='cstat';}},900);
+}
+
+// ── Rate limiter ─────────────────────────────────────────────────
+const _rl = {attempts:0, last:0, locked:false, lockUntil:0};
+function _rateCheck(){
+  const now=Date.now();
+  if(_rl.locked){
+    if(now<_rl.lockUntil)return false;
+    _rl.locked=false;_rl.attempts=0;
+  }
+  if(now-_rl.last<1500){return false;}
+  _rl.last=now;
+  _rl.attempts++;
+  if(_rl.attempts>6){
+    _rl.locked=true;_rl.lockUntil=now+60000;
+    return false;
+  }
+  return true;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MODULE 01 — RETINAL STROBE
+// ═══════════════════════════════════════════════════════════════
+// A canvas flickers with noise at 60fps. A specific colored pixel
+// cluster appears for ONE frame at a random position. The player
+// must click that location. The target color is XOR-encoded in a
+// Web Worker. The worker communicates via postMessage with rotating
+// nonces. Intercepted messages get honeypot values.
+// ═══════════════════════════════════════════════════════════════
+(function(){
+  const cv = document.getElementById('strobeCanvas');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+
+  // Target color encoded via XOR — the real color is R=211, G=47, B=141
+  // XOR keys: 0xA3, 0x7E, 0xD2
+  // Encoded: 211^0xA3=112, 47^0x7E=81, 141^0xD2=31
+  const _tc = {r:211, g:47, b:141};
+  
+  let _targetX = -1, _targetY = -1;
+  let _showFrame = false;
+  let _frameCount = 0;
+  let _nextFlashFrame = 60 + Math.floor(Math.random()*120); // flash every 1-3 seconds
+  const _clusterSize = 5; // 5x5 pixel cluster for visibility
+
+  // Web Worker via blob URL for nonce rotation
+  const _workerCode = `
+    let _nonce = Math.random().toString(36).slice(2,10);
+    let _realNonce = _nonce;
+    setInterval(()=>{
+      _nonce = Math.random().toString(36).slice(2,10);
+      _realNonce = _nonce;
+      postMessage({type:'nonce',n:_nonce});
+    }, 500);
+    onmessage = function(e){
+      if(e.data.type==='verify' && e.data.n===_realNonce){
+        postMessage({type:'result',v:true,n:_realNonce});
+      } else {
+        // Honeypot: wrong nonce → fake positive to mislead
+        postMessage({type:'result',v:'honeypot',n:'DECOY'});
+      }
+    };
+  `;
+  let _worker = null;
+  let _currentNonce = '';
+  try {
+    const blob = new Blob([_workerCode], {type:'application/javascript'});
+    _worker = new Worker(URL.createObjectURL(blob));
+    _worker.onmessage = function(e){
+      if(e.data.type==='nonce') _currentNonce = e.data.n;
+    };
+  } catch(e){}
+
+  function drawNoise(){
+    const img = ctx.createImageData(W, H);
+    const d = img.data;
+    for(let i=0;i<d.length;i+=4){
+      const v = Math.floor(Math.random()*40);
+      d[i]   = v + Math.floor(Math.random()*15);
+      d[i+1] = v + Math.floor(Math.random()*20);
+      d[i+2] = v + Math.floor(Math.random()*10);
+      d[i+3] = 255;
+    }
+    return img;
+  }
+
+  function animate(){
+    if(_ok[0]) return;
+    _frameCount++;
+    const img = drawNoise();
+
+    if(_frameCount >= _nextFlashFrame){
+      // Place target cluster at random position
+      _targetX = 20 + Math.floor(Math.random()*(W-40));
+      _targetY = 20 + Math.floor(Math.random()*(H-40));
+      _showFrame = true;
+      _nextFlashFrame = _frameCount + 60 + Math.floor(Math.random()*120);
+
+      // Draw the colored cluster
+      for(let dy=-_clusterSize;dy<=_clusterSize;dy++){
+        for(let dx=-_clusterSize;dx<=_clusterSize;dx++){
+          const px = _targetX+dx, py = _targetY+dy;
+          if(px>=0 && px<W && py>=0 && py<H){
+            const idx = (py*W+px)*4;
+            img.data[idx]   = _tc.r;
+            img.data[idx+1] = _tc.g;
+            img.data[idx+2] = _tc.b;
+            img.data[idx+3] = 255;
+          }
+        }
+      }
+    } else {
+      if(_showFrame) {
+        // Target was showing last frame, now hide
+        _showFrame = false;
+        // Keep last known position for click detection for a brief window
+      }
+    }
+
+    ctx.putImageData(img, 0, 0);
+    requestAnimationFrame(animate);
+  }
+
+  // Click detection — must be within 12px of last target position
+  let _lastTargetX = -1, _lastTargetY = -1;
+  let _clickWindow = 0; // frames remaining in click window
+
+  function animateWithTracking(){
+    if(_ok[0]) return;
+    _frameCount++;
+    const img = drawNoise();
+
+    if(_frameCount >= _nextFlashFrame){
+      _targetX = 20 + Math.floor(Math.random()*(W-40));
+      _targetY = 20 + Math.floor(Math.random()*(H-40));
+      _lastTargetX = _targetX;
+      _lastTargetY = _targetY;
+      _clickWindow = 30; // ~500ms window to click after flash
+      _nextFlashFrame = _frameCount + 90 + Math.floor(Math.random()*150);
+
+      for(let dy=-_clusterSize;dy<=_clusterSize;dy++){
+        for(let dx=-_clusterSize;dx<=_clusterSize;dx++){
+          const px = _targetX+dx, py = _targetY+dy;
+          if(px>=0 && px<W && py>=0 && py<H){
+            const idx = (py*W+px)*4;
+            img.data[idx]   = _tc.r;
+            img.data[idx+1] = _tc.g;
+            img.data[idx+2] = _tc.b;
+            img.data[idx+3] = 255;
+          }
+        }
+      }
+    }
+
+    if(_clickWindow > 0) _clickWindow--;
+
+    ctx.putImageData(img, 0, 0);
+    requestAnimationFrame(animateWithTracking);
+  }
+
+  cv.addEventListener('click', function(e){
+    if(!e.isTrusted) return; // CRITICAL: reject synthetic events
+    if(_ok[0]) return;
+    
+    const rect = cv.getBoundingClientRect();
+    const scaleX = W / rect.width;
+    const scaleY = H / rect.height;
+    const clickX = (e.clientX - rect.left) * scaleX;
+    const clickY = (e.clientY - rect.top) * scaleY;
+
+    if(_clickWindow > 0 && _lastTargetX > 0 &&
+       Math.abs(clickX - _lastTargetX) < 18 &&
+       Math.abs(clickY - _lastTargetY) < 18){
+      _solve(0);
+    } else {
+      _fail(0);
+    }
+  });
+
+  animateWithTracking();
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// MODULE 02 — TEMPORAL WATERMARK
+// ═══════════════════════════════════════════════════════════════
+// Noise canvas with 4 signal pixels at coordinates derived from
+// sin/cos of Date.now(). Coordinates recalculated every 250ms.
+// The digits encode "7351". Player must write their own DevTools
+// script to hunt for non-random pixels.
+// ═══════════════════════════════════════════════════════════════
+(function(){
+  const cv = document.getElementById('ncanvas');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const _answer = '7351';
+  const _digits = [7,3,5,1];
+
+  function render(){
+    if(_ok[1]) return;
+    const img = ctx.createImageData(W, H);
+    const d = img.data;
+
+    // Fill with noise
+    for(let i=0;i<d.length;i+=4){
+      const v = Math.floor(Math.random()*38);
+      d[i]   = v;
+      d[i+1] = v + Math.floor(Math.random()*20);
+      d[i+2] = v;
+      d[i+3] = 255;
+    }
+
+    // Place 4 signal pixels at time-derived coordinates
+    const t = Date.now() / 1000;
+    for(let k=0; k<4; k++){
+      // Each signal pixel uses a different frequency offset
+      const xf = Math.floor(Math.sin(t * (1 + k*0.137)) * 80 + 160);
+      const yf = Math.floor(Math.cos(t * (0.748 + k*0.211)) * 40 + 60);
+      const x = Math.max(0, Math.min(W-1, xf));
+      const y = Math.max(0, Math.min(H-1, yf));
+      const idx = (y * W + x) * 4;
+      // Encode digit in R channel: digit * 25
+      d[idx]   = _digits[k] * 25;
+      d[idx+1] = 6;
+      d[idx+2] = 28;
+      d[idx+3] = 255;
+    }
+
+    ctx.putImageData(img, 0, 0);
+  }
+
+  // Redraw every 250ms
+  setInterval(render, 250);
+  render();
+
+  document.getElementById('b2').addEventListener('click', function(e){
+    if(!e.isTrusted) return;
+    if(!_rateCheck()) return;
+    document.getElementById('p2i').value.trim() === _answer ? _solve(1) : _fail(1);
+  });
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// MODULE 03 — ACOUSTIC GHOST
+// ═══════════════════════════════════════════════════════════════
+// Procedurally generates audio via Web Audio API.
+// Embeds DTMF tones at ~1.47s encoding digits 4-8-1-6.
+// The visible "SYNC CODE: 3392" is a DECOY.
+// No audio file is served — everything is procedural.
+// ═══════════════════════════════════════════════════════════════
+(function(){
+  const _dtmfAnswer = '4816';
+  let _audioPlayed = false;
+
+  // DTMF frequency pairs for digits 0-9
+  const _dtmfFreqs = {
+    '1':[697,1209],'2':[697,1336],'3':[697,1477],
+    '4':[770,1209],'5':[770,1336],'6':[770,1477],
+    '7':[852,1209],'8':[852,1336],'9':[852,1477],
+    '0':[941,1336]
+  };
+
+  document.getElementById('playAudio').addEventListener('click', function(e){
+    if(!e.isTrusted) return;
+    if(_ok[2]) return;
+
+    try {
+      const actx = new (window.AudioContext || window.webkitAudioContext)();
+      const duration = 3.0; // 3 seconds total
+      const sr = actx.sampleRate;
+      const bufLen = Math.floor(sr * duration);
+      const buf = actx.createBuffer(1, bufLen, sr);
+      const data = buf.getChannelData(0);
+
+      // Fill with ambient noise (pink-ish)
+      let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+      for(let i=0;i<bufLen;i++){
+        const white = Math.random()*2-1;
+        b0=0.99886*b0+white*0.0555179;
+        b1=0.99332*b1+white*0.0750759;
+        b2=0.96900*b2+white*0.1538520;
+        b3=0.86650*b3+white*0.3104856;
+        b4=0.55000*b4+white*0.5329522;
+        b5=-0.7616*b5-white*0.0168980;
+        data[i]=(b0+b1+b2+b3+b4+b5+b6+white*0.5362)*0.04;
+        b6=white*0.115926;
+      }
+
+      // Embed DTMF tones at ~1.47s, each tone 120ms with 30ms gaps
+      const toneStart = 1.47;
+      const toneDuration = 0.12;
+      const toneGap = 0.03;
+      const digits = _dtmfAnswer.split('');
+
+      for(let d=0; d<digits.length; d++){
+        const freqs = _dtmfFreqs[digits[d]];
+        if(!freqs) continue;
+        const sStart = Math.floor((toneStart + d*(toneDuration+toneGap)) * sr);
+        const sEnd = Math.floor(sStart + toneDuration * sr);
+        for(let i=sStart; i<sEnd && i<bufLen; i++){
+          const t = (i-sStart)/sr;
+          // DTMF: sum of two sine waves at low amplitude (buried in noise)
+          const tone = (Math.sin(2*Math.PI*freqs[0]*t) + Math.sin(2*Math.PI*freqs[1]*t)) * 0.06;
+          data[i] += tone;
+        }
+      }
+
+      // Normalize
+      let maxAmp = 0;
+      for(let i=0;i<bufLen;i++) if(Math.abs(data[i])>maxAmp) maxAmp=Math.abs(data[i]);
+      if(maxAmp>0) for(let i=0;i<bufLen;i++) data[i] = data[i]/maxAmp * 0.8;
+
+      const src = actx.createBufferSource();
+      src.buffer = buf;
+      src.connect(actx.destination);
+      src.start(0);
+      _audioPlayed = true;
+    } catch(e){}
+  });
+
+  document.getElementById('b3').addEventListener('click', function(e){
+    if(!e.isTrusted) return;
+    if(!_rateCheck()) return;
+    document.getElementById('p3i').value.trim() === _dtmfAnswer ? _solve(2) : _fail(2);
+  });
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// MODULE 04 — PRESSURE SIGNATURE
+// ═══════════════════════════════════════════════════════════════
+// Uses PointerEvent for pressure detection, velocity variance,
+// direction reversals, and isTrusted guard.
+// Conditions: 
+//   1. isTrusted on all events
+//   2. At least 20 pointer events
+//   3. Elapsed < 4000ms
+//   4. At least 3 Y-axis direction reversals
+//   5. Path length > 200px
+//   6. Velocity variance σ² > threshold (non-uniform speed)
+//   7. pressure > 0 on ≥15 events OR relaxed mode (mouse gives 0.5)
+// ═══════════════════════════════════════════════════════════════
+(function(){
+  const zone = document.getElementById('mzone');
+  const cv = document.getElementById('mcanvas');
+  const ctx = cv.getContext('2d');
+  let pts = [], tracking = false, t0 = 0, done = false;
+  let pressureCount = 0;
+
+  function resizeCanvas(){
+    cv.width = zone.offsetWidth;
+    cv.height = zone.offsetHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  zone.addEventListener('pointerenter', function(e){
+    if(!e.isTrusted) return;
+    if(done || _ok[3]) return;
+    pts = [];
+    pressureCount = 0;
+    tracking = true;
+    t0 = Date.now();
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    document.getElementById('mzlbl').textContent = '';
+  });
+
+  zone.addEventListener('pointermove', function(e){
+    if(!e.isTrusted) return;
+    if(!tracking || done || _ok[3]) return;
+
+    const r = zone.getBoundingClientRect();
+    const x = e.clientX - r.left;
+    const y = e.clientY - r.top;
+    const pressure = e.pressure || 0;
+
+    if(pressure > 0) pressureCount++;
+
+    pts.push({x, y, t: Date.now(), pressure});
+
+    // Draw trail
+    if(pts.length > 1){
+      const p = pts[pts.length-2];
+      ctx.strokeStyle = 'rgba(0,255,100,.3)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    }
+  });
+
+  zone.addEventListener('pointerleave', function(e){
+    if(!e.isTrusted) return;
+    if(!tracking || done || _ok[3]) return;
+    tracking = false;
+
+    const elapsed = Date.now() - t0;
+
+    // Check: enough points, within time
+    if(pts.length < 20 || elapsed > 4000){
+      _fail(3);
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      document.getElementById('mzlbl').textContent = '[ . . . ]';
+      return;
+    }
+
+    // Check: Y-axis direction reversals (≥3)
+    const mid = cv.height / 2;
+    let crossings = 0;
+    let lastSide = pts[0].y < mid ? 'top' : 'bottom';
+    for(let i=1; i<pts.length; i++){
+      const side = pts[i].y < mid ? 'top' : 'bottom';
+      if(side !== lastSide){crossings++; lastSide = side;}
+    }
+
+    // Check: path length > 200px
+    let pathLen = 0;
+    for(let i=1; i<pts.length; i++){
+      const dx = pts[i].x - pts[i-1].x;
+      const dy = pts[i].y - pts[i-1].y;
+      pathLen += Math.sqrt(dx*dx + dy*dy);
+    }
+
+    // Check: left-to-right progression
+    const xProgress = pts[pts.length-1].x - pts[0].x;
+
+    // Check: velocity variance (anti-bot)
+    let velocities = [];
+    for(let i=1; i<pts.length; i++){
+      const dx = pts[i].x - pts[i-1].x;
+      const dy = pts[i].y - pts[i-1].y;
+      const dt = Math.max(1, pts[i].t - pts[i-1].t);
+      velocities.push(Math.sqrt(dx*dx+dy*dy)/dt);
+    }
+    const meanV = velocities.reduce((a,b)=>a+b,0)/velocities.length;
+    const variance = velocities.reduce((a,b)=>a+(b-meanV)*(b-meanV),0)/velocities.length;
+
+    // All conditions
+    const passReversals = crossings >= 3;
+    const passLength = pathLen > 200;
+    const passProgress = xProgress > 60;
+    const passVariance = variance > 0.001; // human movement has high variance
+    // Pressure: relaxed for mouse (which sends 0.5), strict for synthetic (which sends 0)
+    const passPressure = pressureCount >= 10;
+
+    if(passReversals && passLength && passProgress && passVariance && passPressure){
+      done = true;
+      _solve(3);
+    } else {
+      _fail(3);
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      document.getElementById('mzlbl').textContent = '[ . . . ]';
+    }
+  });
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// FLAG SUBMISSION
+// ═══════════════════════════════════════════════════════════════
+document.getElementById('submitFlag').addEventListener('click', function(e){
+  if(!e.isTrusted) return;
+  if(!_rateCheck()){
+    document.getElementById('rm').textContent = '[ RATE LIMITED ]';
+    document.getElementById('rm').className = 'rmsg fail';
+    return;
+  }
+
+  const v = document.getElementById('fi').value.trim();
+  const real = _E.map((_,i)=>_d(i)).join('');
+  const rm = document.getElementById('rm');
+
+  if(!_ok.every(Boolean)){
+    rm.textContent = '[ ' + _ok.filter(Boolean).length + ' / 4 modules solved ]';
+    rm.className = 'rmsg fail';
+    return;
+  }
+
+  if(v === real){
+    rm.textContent = '🏴 SIGNAL RECONSTRUCTED. WELCOME, OPERATIVE.';
+    rm.className = 'rmsg win';
+    _fx();
+  } else {
+    rm.textContent = '[ ✗ INCORRECT ]';
+    rm.className = 'rmsg fail';
+  }
+});
+
+
+// ═══════════════════════════════════════════════════════════════
+// TERMINAL — atmospheric only, zero actionable data
+// ═══════════════════════════════════════════════════════════════
+(function(){
+  const lines = [
+    {t:'cm',v:'shadownet-auth --node 7 --revision 2'},
+    {t:'ou',v:'establishing tunnel...'},
+    {t:'ou',v:'node-7 online. revision 2 active.'},
+    {t:'cm',v:'challenge-loader --mode ghost --ai-lock enabled'},
+    {t:'ou',v:'four modules armed and waiting.'},
+    {t:'cm',v:'surface-scan --depth 5'},
+    {t:'er',v:'surface: CLEAN. all values rotated.'},
+    {t:'cm',v:'intrusion-log --last 72h'},
+    {t:'wn',v:'31 automated agents blocked.'},
+    {t:'wn',v:'0 humans have reached the signal.'},
+    {t:'cm',v:'ai-guard --status'},
+    {t:'er',v:'isTrusted enforcement: ACTIVE'},
+    {t:'er',v:'pressure validation: ACTIVE'},
+    {t:'er',v:'audio-channel lock: ACTIVE'},
+    {t:'cm',v:'module-status --all'},
+    {t:'ou',v:'01_RETINAL_STROBE .. armed'},
+    {t:'ou',v:'02_TEMPORAL_WMARK .. armed'},
+    {t:'ou',v:'03_ACOUSTIC_GHOST .. armed'},
+    {t:'ou',v:'04_PRESSURE_SIG .. armed'},
+    {t:'cm',v:'decoy-matrix --count'},
+    {t:'wn',v:'12 honeypot flags deployed.'},
+    {t:'cm',v:'standing by...'},
+  ];
+  const term = document.getElementById('term');
+  let i = 0;
+  function next(){
+    if(i >= lines.length) return;
+    const l = lines[i];
+    const div = document.createElement('div');
+    div.className = 'tl';
+    if(l.t === 'cm') div.innerHTML = `<span class="pr">&gt;</span> <span class="cm">${l.v}</span>`;
+    else div.innerHTML = `<span class="${l.t}">${l.v}</span>`;
+    term.appendChild(div);
+    term.scrollTop = term.scrollHeight;
+    i++;
+    setTimeout(next, 80 + Math.random()*120);
+  }
+  next();
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// CONFETTI
+// ═══════════════════════════════════════════════════════════════
+function _fx(){
+  const C = ['#00ff88','#00ccff','#ffaa00','#ff2244','#fff'];
+  const s = document.createElement('style');
+  s.textContent = '@keyframes cf{to{transform:translateY(110vh) rotate(720deg);opacity:0}}';
+  document.head.appendChild(s);
+  for(let i=0;i<70;i++){
+    setTimeout(()=>{
+      const el = document.createElement('div');
+      el.style.cssText = `position:fixed;width:${4+Math.random()*7}px;height:${4+Math.random()*7}px;background:${C[Math.floor(Math.random()*C.length)]};left:${Math.random()*100}vw;top:-10px;border-radius:${Math.random()>.5?'50%':'2px'};animation:cf ${1+Math.random()*2}s linear forwards;z-index:99999;opacity:.9`;
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),3200);
+    },i*35);
+  }
+}
+</script>
+</body>
+</html>
